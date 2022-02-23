@@ -24,7 +24,7 @@ class LineItemsController < ApplicationController
   # POST /line_items or /line_items.json
   def create
     @instrument = Instrument.find(params[:instrument_id])
-    @line_item = @cart.add_instrument(line_item_params)
+    @line_item = @cart.add_instrument(@instrument)
 
     respond_to do |format|
       if @line_item.save
@@ -51,11 +51,12 @@ class LineItemsController < ApplicationController
   end
 
   # DELETE /line_items/1 or /line_items/1.json
-  def destroy
+  def destroy #
+    @cart = Cart.find(session[:cart_id])
     @line_item.destroy
 
     respond_to do |format|
-      format.html { redirect_to line_items_url, notice: "Line item was successfully destroyed." }
+      format.html { redirect_to cart_path(@cart), notice: "Line item was successfully destroyed." }
       format.json { head :no_content }
     end
   end
@@ -68,6 +69,6 @@ class LineItemsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def line_item_params
-      params.require(:line_item).permit(:instrument_id, :cart)
+      params.require(:line_item).permit(:instrument_id)
     end
 end
